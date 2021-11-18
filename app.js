@@ -1,18 +1,25 @@
-const request = require('postman-request');
-require('dotenv').config();
+require("dotenv").config();
 
-const geocode = require('./utils/geocode');
-const forecast = require('./utils/forecast');
+const geocode = require("./utils/geocode");
+const forecast = require("./utils/forecast");
 
-const WEATHER_KEY = process.env.WEATHER_KEY;
-const MAPBOX_KEY = process.env.MAPBOX_KEY;
+const address = process.argv[2];
 
-geocode('Odivelas', (error, data) => {
-  console.log('Error', error);
-  console.log('Data', data);
-});
+if (address) {
+  geocode(address, (error, { latitude, longitude, location } = {}) => {
+    if (error) {
+      return console.log("Error", error);
+    }
 
-forecast(441545, -75.7088, (error, data) => {
-  console.log('Error', error);
-  console.log('Data', data);
-});
+    forecast(latitude, longitude, (error, forecastData) => {
+      if (error) {
+        return console.log("Error", error);
+      }
+
+      console.log(location);
+      console.log(forecastData);
+    });
+  });
+} else {
+  console.log("Please provide a address");
+}
